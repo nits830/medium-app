@@ -3,6 +3,8 @@ import express from "express";
 import { PrismaClient } from "@prisma/client";
 import userSchema from "./models/zod_schema";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import authenticateToken from "../src/middlewares/authenticateToken";
 
 dotenv.config();
 const app = express();
@@ -66,7 +68,15 @@ app.post("/api/v1/signin", async (req, res) => {
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (passwordMatch) {
-      res.send("Login successful");
+      if (!process.env.JWT_SECRET) {
+        return res.status(500).json({ message: "JWT secret is not defined" });
+      }
+      const token = jwt.sign(
+        { userId: user.id, name: user.name },
+        process.env.JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+      res.json({ token });
     } else {
       res.status(401).send("Invalid password");
     }
@@ -75,6 +85,11 @@ app.post("/api/v1/signin", async (req, res) => {
   } finally {
     await prisma.$disconnect();
   }
+});
+
+// Test Protected Route
+app.get("/protected", authenticateToken, (req, res) => {
+  res.json({ message: "You have accessed the protected resource" });
 });
 
 app.listen(process.env.PORT, () => {
