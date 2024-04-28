@@ -19,7 +19,7 @@ function authenticateToken(req: Request, res: Response, next: NextFunction) {
     if (err) {
       return res.status(403).json({ message: "Invalid token" });
     }
-    req.body.user = decoded; // Attach decoded user information to request object
+    req.body.author = decoded; // Attach decoded user information to request object
     next();
   });
 }

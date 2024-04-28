@@ -11,7 +11,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Site in progress");
 });
 
 // Sign up route
@@ -87,9 +87,65 @@ app.post("/api/v1/signin", async (req, res) => {
   }
 });
 
+// Logout Route
+
+app.post("/logout", (req, res) => {
+  res.clearCookie("jwtToken");
+  res.status(200).json({ message: "Logout successful" });
+});
+
 // Test Protected Route
 app.get("/protected", authenticateToken, (req, res) => {
   res.json({ message: "You have accessed the protected resource" });
+});
+
+// POST ROUTES
+
+app.post("/posts", authenticateToken, async (req, res) => {
+  const authorId = req.body.author.userId;
+
+  const { title, description } = req.body;
+  const prisma = new PrismaClient();
+  try {
+    const user = await prisma.post.create({
+      data: {
+        title: title,
+        description: description,
+        published: true,
+        authorId: authorId,
+      },
+    });
+    res.status(200).json({ msg: "Post Created" });
+  } catch (error) {
+    res.status(400).json({ msg: "Error Creating Post" });
+  } finally {
+    await prisma.$disconnect();
+  }
+});
+
+// Get Post route
+app.get("/posts", authenticateToken, async (req, res) => {
+  const authorId = req.body.id;
+  const prisma = new PrismaClient();
+  try {
+    const posts = await prisma.post.findMany({
+      where: {
+        author: {
+          id: authorId,
+        },
+      },
+    });
+
+    if (!posts) {
+      return res.status(400).send(" User has not posted anything");
+    } else {
+      res.status(200).send(posts);
+    }
+  } catch (error) {
+    res.status(404).send("Not found");
+  } finally {
+    await prisma.$disconnect();
+  }
 });
 
 app.listen(process.env.PORT, () => {
