@@ -14,10 +14,19 @@ app.get("/", (req, res) => {
 
 // Sign up route
 app.post("/api/v1/signup", async (req, res) => {
+  const saltRoundsString = process.env.SALT_ROUNDS;
+  if (!saltRoundsString) {
+    throw new Error("SALT_ROUNDS environment variable is not defined");
+  }
+  const saltRounds = parseInt(saltRoundsString);
+  if (isNaN(saltRounds)) {
+    throw new Error("Invalid value for SALT_ROUNDS environment variable");
+  }
+
   const payload = req.body;
   const validatedUser = userSchema.safeParse(payload);
   if (validatedUser.success) {
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
 
     const prisma = new PrismaClient();
     try {
