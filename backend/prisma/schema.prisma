@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// schema.prisma
+
+model User {
+  id        String      @id @default(uuid())
+  name      String
+  email     String      @unique
+  password  String
+  createdAt DateTime    @default(now())
+  posts     Post[]      // Define a one-to-many relation from User to Post
+}
+
+model Post {
+  id         String      @id @default(uuid())
+  title      String
+  description String
+  createdAt  DateTime    @default(now())
+  published  Boolean
+  author     User        @relation(fields: [authorId], references: [id]) // Define a many-to-one relation from Post to User
+  authorId   String      
+}
