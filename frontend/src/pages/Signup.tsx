@@ -1,10 +1,59 @@
 import axios from 'axios'
+import { useState , ChangeEvent, FormEvent} from 'react';
+
 
 const Signup = () => {
 
-    const handleSubmit = async () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: ''
+  });
 
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = event.target;
+    
+    if (id) {
+      setFormData({ ...formData, [id]: value });
     }
+    
+  };
+
+  
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault(); // Prevent default form submission
+
+    const { name, email, password } = formData;
+    console.log(formData)
+   
+    const userData = {
+      name,
+      email,
+      password
+    };
+    
+    
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/v1/signup', userData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('Sign up successful!', response.data);
+      setFormData({
+        name: '',
+        email: '',
+        password: ''
+      });
+
+      
+      // Optionally, you can redirect the user or perform other actions upon successful signup
+    } catch (error) {
+      console.error('Sign up failed!', error);
+    }
+  };
 
 
   return (
@@ -21,6 +70,7 @@ const Signup = () => {
               id="name"
               type="text"
               placeholder="Name"
+              onChange={handleChange}
             />
           </div>
           <div className="mb-4">
@@ -32,6 +82,7 @@ const Signup = () => {
               id="email"
               type="email"
               placeholder="Email"
+              onChange={handleChange}
             />
           </div>
           <div className="mb-6">
@@ -43,12 +94,13 @@ const Signup = () => {
               id="password"
               type="password"
               placeholder="Password"
+              onChange={handleChange}
             />
           </div>
           <div className="flex items-center justify-between">
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="button"
+              type="submit"
             >
               Sign Up
             </button>

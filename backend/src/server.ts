@@ -4,11 +4,14 @@ import { PrismaClient } from "@prisma/client";
 import userSchema from "./models/zod_schema";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import cors from "cors";
 import authenticateToken from "../src/middlewares/authenticateToken";
 
 dotenv.config();
 const app = express();
 app.use(express.json());
+
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Site in progress");
