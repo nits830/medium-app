@@ -24,7 +24,7 @@ const Signup = () => {
     event.preventDefault(); // Prevent default form submission
 
     const { name, email, password } = formData;
-    console.log(formData)
+    
    
     const userData = {
       name,
@@ -32,21 +32,21 @@ const Signup = () => {
       password
     };
     
-    
+    setFormData({
+      name: '',
+      email: '',
+      password: ''
+    });
 
     try {
-      const response = await axios.post('http://localhost:3000/api/v1/signup', userData, {
+       await axios.post('http://localhost:3000/api/v1/signup', userData, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
       
-      console.log('Sign up successful!', response.data);
-      setFormData({
-        name: '',
-        email: '',
-        password: ''
-      });
+      
+      
 
       
       // Optionally, you can redirect the user or perform other actions upon successful signup
@@ -71,6 +71,8 @@ const Signup = () => {
               type="text"
               placeholder="Name"
               onChange={handleChange}
+              value={formData.name}
+              
             />
           </div>
           <div className="mb-4">
@@ -83,6 +85,7 @@ const Signup = () => {
               type="email"
               placeholder="Email"
               onChange={handleChange}
+              value={formData.email}
             />
           </div>
           <div className="mb-6">
@@ -95,6 +98,7 @@ const Signup = () => {
               type="password"
               placeholder="Password"
               onChange={handleChange}
+              value={formData.password}
             />
           </div>
           <div className="flex items-center justify-between">
