@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+
+import  useAuth  from '../hooks/useAuth';
+
 
 interface SignInData {
   email: string;
   password: string;
 }
 
+
+
 const SignIn = () => {
   const [formData, setFormData] = useState<SignInData>({
     email: '',
     password: '',
   });
+
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -19,31 +25,29 @@ const SignIn = () => {
       [id]: value,
     });
   };
-
+  const { login, redirectAfterLogin  } = useAuth();
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-        try{
-        const response = await axios.post<{ token: string }>('http://localhost:3000/api/v1/signin', formData, {
-         headers: {
-           'Content-Type': 'application/json'
-         }
-       })
-       ;
-       const token = response.data.token;
-       localStorage.setItem('token', token);
-       console.log('Sign in successful!', token);
 
     
-    setFormData({
-      email: '',
-      password: '',
-    });
-    }catch (error) {
-        // Handle sign-in error
-        console.error('Sign in failed:', error);
-      }
-  };
+    e.preventDefault();
+    try {
+      await login(formData);  
+      if (redirectAfterLogin) {
+        window.location.href = redirectAfterLogin;  // Redirect using redirect URL
+      } else {
+        // Optional: Redirect to a default page if no redirect URL provided
+        // window.location.href = "/dashboard"; // Example
+      }   
+    } 
+    catch (error) {
+      console.error('Sign in failed:', error);      
+    } 
+    finally {
+      setFormData({
+        email: '',
+        password: '',
+      });
+    }}
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
