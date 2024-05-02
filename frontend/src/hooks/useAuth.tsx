@@ -69,17 +69,19 @@ const useAuth = (): AuthContext => {
       
         
       // Handle successful login and redirect (if applicable)
-      if (redirectAfterLogin && isAuthenticated) {
-        window.location.href = redirectAfterLogin;
-        setRedirectAfterLogin(undefined); // Clear redirect URL after use
-      }
+    if (redirectAfterLogin) {
+      window.location.href = redirectAfterLogin;
+      setRedirectAfterLogin(undefined); // Clear redirect URL after use
+    }
     } catch (error) {
+     
       console.error('Sign in failed:', error);
-      setIsAuthenticated(false)
-      if (redirectOnFail && isAuthenticated==false) {
-        window.location.href = redirectOnFail;
-        setRedirectOnFail(undefined)
-        }
+    // Handle login errors (e.g., display error message)
+
+    if (redirectOnFail) {
+      window.location.href = redirectOnFail;
+      setRedirectOnFail(undefined); // Clear redirect URL after use
+    }
       // Handle login errors (e.g., display error message)
     }
   };
