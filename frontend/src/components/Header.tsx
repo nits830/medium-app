@@ -10,7 +10,7 @@ const Header = () => {
     const isAuthenticated = false
   return (
     <>
-      <div className="h-20 font-sans flex justify-between">
+      <div className="h-20 font-sans flex justify-between mb-10">
         <Link to="/">
         <div className="text-2xl font-bold flex justify-center items-center float-start">
           <img src="https://t4.ftcdn.net/jpg/05/30/22/25/360_F_530222536_UXrSnRK1dKUkcti6oXPW1GoFFMAZ4FHY.jpg" alt="logo" className="h-16 w-16" />

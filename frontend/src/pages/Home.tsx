@@ -1,16 +1,11 @@
-import Header from "../components/Header";
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Write from "./Write";
+
+import TrendingHero from "../components/TrendingHero";
 
 const Home = () => {
   return (
-    <>
-    
-    <Routes>
-      
-      
-    </Routes>
-    </>
+    <div>
+      <TrendingHero/>
+    </div>
     
   );
 }

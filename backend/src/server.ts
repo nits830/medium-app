@@ -103,8 +103,8 @@ app.get("/protected", authenticateToken, (req, res) => {
 });
 
 // POST ROUTES
-
-app.post("/posts", authenticateToken, async (req, res) => {
+// To add autheication middleware
+app.post("/posts", async (req, res) => {
   const authorId = req.body.author.userId;
 
   const { title, description } = req.body;
