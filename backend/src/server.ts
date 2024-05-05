@@ -104,7 +104,7 @@ app.get("/protected", authenticateToken, (req, res) => {
 
 // POST ROUTES
 // To add autheication middleware
-app.post("/posts", async (req, res) => {
+app.post("/posts", authenticateToken, async (req, res) => {
   const authorId = req.body.author.userId;
 
   const { title, description } = req.body;
@@ -146,6 +146,31 @@ app.get("/posts", authenticateToken, async (req, res) => {
     }
   } catch (error) {
     res.status(404).send("Not found");
+  } finally {
+    await prisma.$disconnect();
+  }
+});
+
+// Get post Route for first six articles
+
+app.get("/trendingPosts", async (req, res) => {
+  const prisma = new PrismaClient();
+  try {
+    // Query the first six posts from the database
+    const posts = await prisma.post.findMany({
+      take: 6, // Limit the number of posts to 6
+      orderBy: {
+        createdAt: "desc", // Order the posts by createdAt date, you can use 'asc' for ascending order
+      },
+      include: {
+        author: true, // Include the author information for each post
+      },
+    });
+
+    res.json(posts);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ error: "Internal server error" });
   } finally {
     await prisma.$disconnect();
   }
